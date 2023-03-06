@@ -33,7 +33,6 @@ const SignInScreen = ({ navigation }) => {
     console.log("Sign Up");
     navigation.navigate("SignUp");
   };
-  console.log(errors);
   return (
     <ScrollView>
       <View style={styles.container}>

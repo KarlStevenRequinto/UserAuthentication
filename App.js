@@ -7,8 +7,13 @@ import NewPasswordScreen from "./src/screens/NewPasswordScreen";
 import HomeScreen from "./src/screens/HomeScreen";
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
+import { Amplify } from "aws-amplify";
+import awsConfig from "./src/aws-exports";
+
+Amplify.configure(awsConfig);
+
 const Stack = createStackNavigator();
-export default function App() {
+const App = () => {
   return (
     <NavigationContainer>
       <Stack.Navigator screenOptions={{ headerShown: false }}>
@@ -21,13 +26,6 @@ export default function App() {
       </Stack.Navigator>
     </NavigationContainer>
   );
-}
+};
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#F9FBFC",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-});
+export default App;
