@@ -6,10 +6,12 @@ import CustomButton from "../../components/CustomButton";
 import { useState } from "react";
 import SocialSignInButtons from "../../components/SocialSignInButtons";
 import { useForm } from "react-hook-form";
+import { Auth } from "aws-amplify";
 
 const SignInScreen = ({ navigation }) => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
   const { height } = useWindowDimensions();
   const {
     control,
@@ -17,16 +19,28 @@ const SignInScreen = ({ navigation }) => {
     formState: { errors },
   } = useForm();
 
-  const onSignInPressed = (data) => {
-    console.log("Sign in");
-    // console.log(data);
+  const onSignInPressed = async (data) => {
+    if (loading) {
+      return;
+    } else {
+      setLoading(true);
+      try {
+        const response = await Auth.signIn(data.username, data.password);
+        console.log(response);
+      } catch (error) {
+        console.log(error);
+      }
+      setLoading(false);
+    }
+
+    console.log("onSignInPressed");
     // validate user
-    navigation.navigate("Home");
+    // navigation.navigate("Home");
   };
 
   const onForgotPasswordPressed = () => {
     console.log("Forgot Password");
-    navigation.navigate("ForgotPassword");
+    // navigation.navigate("ForgotPassword");
   };
 
   const onSignUpPressed = () => {
@@ -61,7 +75,10 @@ const SignInScreen = ({ navigation }) => {
             },
           }}
         />
-        <CustomButton text="Sign in" onPress={handleSubmit(onSignInPressed)} />
+        <CustomButton
+          text={loading ? "Loading..." : "Sign in"}
+          onPress={handleSubmit(onSignInPressed)}
+        />
 
         <CustomButton
           text="Forgot Password"

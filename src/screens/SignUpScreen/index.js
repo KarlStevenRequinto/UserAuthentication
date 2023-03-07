@@ -6,18 +6,29 @@ import CustomButton from "../../components/CustomButton";
 import { useState } from "react";
 import SocialSignInButtons from "../../components/SocialSignInButtons";
 import { useForm } from "react-hook-form";
+import { Auth } from "aws-amplify";
 
 const SignUpScreen = ({ navigation }) => {
-  const [username, setUsername] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [passRepeat, setPassRepeat] = useState("");
+  // const [username, setUsername] = useState("");
+  // const [email, setEmail] = useState("");
+  // const [password, setPassword] = useState("");
+  // const [passRepeat, setPassRepeat] = useState("");
   const { control, handleSubmit, watch } = useForm();
   const pwd = watch("password");
 
   const EMAIL_REGEX =
     /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
-  const onRegisterPressed = () => {
+  const onRegisterPressed = async (data) => {
+    const { username, password, email, name } = data;
+    console.log("onRegisterPressed");
+
+    const response = await Auth.signUp({
+      username,
+      password,
+      attributes: { email, name, preferred_username: username },
+    });
+    console.log(data);
+    console.log(response);
     navigation.navigate("ConfirmEmail");
   };
 
@@ -38,6 +49,22 @@ const SignUpScreen = ({ navigation }) => {
       <View style={styles.container}>
         <Text style={styles.title}>Confirm your email</Text>
 
+        <CustomInput
+          name="name"
+          control={control}
+          placeholder="Name"
+          rules={{
+            required: "Name is required",
+            minLength: {
+              value: 3,
+              message: "Name should be at least 3 characters long",
+            },
+            maxLength: {
+              value: 24,
+              message: "Name should be max 24 characters long",
+            },
+          }}
+        />
         <CustomInput
           name="username"
           control={control}
